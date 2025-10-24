@@ -1,8 +1,8 @@
 /* Configuración básica */
 const WHATSAPP_NUMBER = '5491112345678'; // <-- Reemplazá con tu número en formato internacional, sin + ni 0
 const INSTAGRAM_URL = 'https://www.instagram.com/piwipi05//'; // <-- Tu perfil
-const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61580834246359'; // <-- Correo para mailto del formulario
-const MONEDA = '$'; // puedes cambiar a 'USD ', 'ARS $', etc.
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61580834246359'; //
+const MONEDA = 'ARS$'; // puedes cambiar a 'USD ', 'ARS $', etc.
 
 /* Productos del catálogo (ejemplo) */
 let PRODUCTS = [];
