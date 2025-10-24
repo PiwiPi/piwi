@@ -92,3 +92,32 @@ code{background:#0f1116; padding:2px 6px; border:1px solid var(--border); border
   .nav ul.open{display:flex}
   .grid{grid-template-columns: 1fr}
 }
+/* ======== CATEGORÍAS (BOTONERA) ======== */
+.cats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 12px 0 18px;
+}
+
+.cats .chip {
+  border: 1px solid var(--border);
+  background: #0f1116;
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  font-size: 0.9rem;
+}
+
+.cats .chip:hover {
+  filter: brightness(1.2);
+}
+
+.cats .chip.active {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(200,168,90,.15);
+  color: var(--accent);
+  font-weight: 600;
+}
