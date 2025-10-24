@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Piwi Pi — Diseños digitales para grabado láser</title>
+  <meta name="description" content="Catálogo de diseños vectoriales y fotograbados en blanco y negro para láser. Compra por WhatsApp y recibe los archivos por email o WhatsApp." />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0b0c0f;
+      color: white;
+      margin: 0;
+      text-align: center;
+      padding: 50px 20px;
+    }
+    h1 { font-size: 2.2rem; margin-bottom: 10px; }
+    p { font-size: 1.1rem; margin-bottom: 30px; }
+  </style>
+</head>
+<body>
+  <h1>Piwi Pi</h1>
+  <p>Sitio en construcción — próximamente catálogo, carrito y compra por WhatsApp.</p>
+  <p>🚀 Publicado con GitHub Pages</p>
+</body>
+</html>
