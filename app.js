@@ -23,6 +23,88 @@ async function fileExists(url){
     return res.ok;
   } catch { return false; }
 }
+// Verifica si un archivo existe en el servidor (método HEAD)
+async function fileExists(url){
+  try { const r = await fetch(url, { method:'HEAD', cache:'no-store' }); return r.ok; }
+  catch { return false; }
+}
+
+// Busca diseno_001, diseno_002... dentro de una carpeta de una categoría
+async function discoverCategory(cat){
+  const items = [];
+  for(let i=1;i<=200;i++){
+    const n = String(i).padStart(3,'0');
+    let found=null;
+    for(const ext of EXTENSIONS){
+      const url = `${cat.folder}/${cat.prefix}${n}.${ext}`;
+      // eslint-disable-next-line no-await-in-loop
+      if(await fileExists(url)){ found=url; break; }
+    }
+    if(found){
+      items.push({ id:`${cat.slug}-${i}`, name:`${cat.name} #${i}`, price:DEFAULT_PRICE, img:found, category:cat.slug });
+    }
+  }
+  return items;
+}
+
+// Descubre todas las categorías
+async function discoverAll(){
+  const all=[];
+  for(const cat of CATEGORIES){
+    // eslint-disable-next-line no-await-in-loop
+    const items = await discoverCategory(cat);
+    all.push(...items);
+  }
+  return all;
+}
+
+// ---- Render de categorías y productos con filtro ----
+let ACTIVE_CATEGORY='all';
+
+function renderCategories(){
+  const bar = document.getElementById('categoriesBar');
+  if(!bar) return;
+  const chips=[{slug:'all',name:'Todos'}, ...CATEGORIES.map(c=>({slug:c.slug,name:c.name}))];
+  bar.innerHTML = chips.map(c=>`
+    <button class="chip ${c.slug===ACTIVE_CATEGORY?'active':''}" data-cat="${c.slug}">${c.name}</button>
+  `).join('');
+  bar.querySelectorAll('[data-cat]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      ACTIVE_CATEGORY = btn.dataset.cat;
+      renderCategories();
+      renderProducts();
+    });
+  });
+}
+
+function getVisibleProducts(){
+  return ACTIVE_CATEGORY==='all' ? PRODUCTS : PRODUCTS.filter(p=>p.category===ACTIVE_CATEGORY);
+}
+
+function renderProducts(){
+  const grid = document.getElementById('productGrid');
+  const list = getVisibleProducts();
+  if(!list.length){
+    grid.innerHTML = `<div class="muted">No hay diseños en esta categoría todavía.</div>`;
+    return;
+  }
+  grid.innerHTML = list.map(p=>`
+    <article class="card">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="pad">
+        <h4>${p.name}</h4>
+        <div class="row">
+          <span class="price">${fmt(p.price)}</span>
+          <button class="btn outline" data-add="${p.id}">Agregar</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+  grid.querySelectorAll('[data-add]').forEach(btn=>{
+    btn.addEventListener('click', ()=> addToCart(btn.dataset.add));
+  });
+}
+
 
 // Descubre diseno_001, diseno_002, ... en /assets/productos
 async function discoverProducts(){
@@ -227,3 +309,17 @@ function setupCartActions(){
   setupNav();
   setupCartActions();
 })();
+// ===== Auto-catálogo con carpetas =====
+const DEFAULT_PRICE = 4500;
+const EXTENSIONS    = ['png','jpg','jpeg','svg','webp'];
+
+// Categorías/carpetas que querés mostrar (usamos "assets/productos/..."):
+const CATEGORIES = [
+  { slug: 'rock',     name: 'Virolas Rock',     folder: 'assets/productos/rock',     prefix: 'diseno_' },
+  { slug: 'series',   name: 'Virolas Series',   folder: 'assets/productos/series',   prefix: 'diseno_' },
+  { slug: 'mascotas', name: 'Mascotas',         folder: 'assets/productos/mascotas', prefix: 'diseno_' },
+];
+
+// Catálogo en memoria (no dejes el array viejo)
+let PRODUCTS = [];
+
