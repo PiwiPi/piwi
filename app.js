@@ -1,13 +1,13 @@
 /* Configuración básica */
 const WHATSAPP_NUMBER = '5491112345678'; // <-- Reemplazá con tu número en formato internacional, sin + ni 0
-const INSTAGRAM_URL = 'https://instagram.com/'; // <-- Tu perfil
-const EMAIL_DESTINO = 'ventas@tu-dominio.com'; // <-- Correo para mailto del formulario
+const INSTAGRAM_URL = 'https://www.instagram.com/piwipi05//'; // <-- Tu perfil
+const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61580834246359'; // <-- Correo para mailto del formulario
 const MONEDA = '$'; // puedes cambiar a 'USD ', 'ARS $', etc.
 
 /* Productos del catálogo (ejemplo) */
 const PRODUCTS = [
-  { id: 'p1', name: 'Pack Virolas Rock #1', price: 4500, img: 'assets/prod_1.svg' },
-  { id: 'p2', name: 'Pack Virolas Series #2', price: 4500, img: 'assets/prod_2.svg' },
+  { id: 'p1', name: 'Pack Virolas de Rock #1', price: 4500, img: 'assets/prod_1.svg' },
+  { id: 'p2', name: 'Pack Virolas de Series #2', price: 4500, img: 'assets/prod_2.svg' },
   { id: 'p3', name: 'Stencil Retrato Sencillo', price: 6000, img: 'assets/prod_3.svg' },
   { id: 'p4', name: 'Stencil Mascota', price: 6000, img: 'assets/prod_4.svg' },
   { id: 'p5', name: 'Pack Iconos Láser', price: 3500, img: 'assets/prod_5.svg' },
