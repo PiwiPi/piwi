@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Piwi Pi — Diseños digitales para grabado láser</title>
+  <meta name="description" content="Catálogo de diseños vectoriales y fotograbados en blanco y negro para láser. Compra por WhatsApp y recibe los archivos por email o WhatsApp." />
+  <link rel="preload" as="image" href="assets/logo.png">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="#inicio" class="brand">
+        <img src="assets/logo.png" alt="Logo Piwi Pi" class="logo"/>
+        <div class="brand-text">
+          <h1>Piwi Pi</h1>
+          <span>vectores</span>
+        </div>
+      </a>
+      <nav class="nav">
+        <button class="nav-toggle" id="navToggle" aria-label="Abrir menú">☰</button>
+        <ul id="navMenu">
+          <li><a href="#inicio">Inicio</a></li>
+          <li><a href="#catalogo">Catálogo</a></li>
+          <li><a href="#carrito">Carrito <span id="cartCount" class="badge">0</span></a></li>
+          <li><a href="#como-comprar">Cómo comprar</a></li>
+          <li><a href="#contacto">Contacto</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- INICIO -->
+    <section id="inicio" class="section hero">
+      <div class="container hero-inner">
+        <div class="hero-text">
+          <h2>Diseños listos para grabado láser</h2>
+          <p>Archivos en estilo blanco y negro, alto contraste y líneas limpias. Comprás por WhatsApp y te enviamos los archivos por <strong>email</strong> o <strong>WhatsApp</strong> luego del pago.</p>
+          <a class="btn primary" href="#catalogo">Ver catálogo</a>
+        </div>
+        <div class="hero-art">
+          <img src="assets/prod_1.svg" alt="Muestra de diseño" />
+        </div>
+      </div>
+    </section>
+
+    <!-- CATALOGO -->
+    <section id="catalogo" class="section">
+      <div class="container">
+        <h3>Catálogo</h3>
+        <div id="productGrid" class="grid"></div>
+      </div>
+    </section>
+
+    <!-- CARRITO -->
+    <section id="carrito" class="section alt">
+      <div class="container">
+        <h3>Carrito</h3>
+        <div id="cartEmpty" class="muted">Tu carrito está vacío.</div>
+        <div id="cartList"></div>
+        <div id="cartSummary" class="cart-summary">
+          <div><strong>Total:</strong> <span id="cartTotal">$0</span></div>
+          <button class="btn outline" id="clearCartBtn">Vaciar carrito</button>
+          <button class="btn primary" id="checkoutBtn">Finalizar compra</button>
+        </div>
+        <p class="hint">Al finalizar, se abrirá WhatsApp con el detalle del pedido para confirmar.</p>
+      </div>
+    </section>
+
+    <!-- COMO COMPRAR -->
+    <section id="como-comprar" class="section">
+      <div class="container">
+        <h3>Cómo comprar</h3>
+        <ol class="steps">
+          <li>Elegí tus diseños en el <a href="#catalogo">catálogo</a> y añadilos al carrito.</li>
+          <li>Presioná <strong>Finalizar compra</strong> para enviarnos el pedido por WhatsApp.</li>
+          <li>Te compartimos los datos de pago. Una vez acreditado, enviamos los archivos por <strong>correo</strong> o <strong>WhatsApp</strong>.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- CONTACTO -->
+    <section id="contacto" class="section alt">
+      <div class="container">
+        <h3>Contacto</h3>
+        <div class="contact-grid">
+          <form id="contactForm">
+            <label>Nombre
+              <input type="text" name="nombre" required placeholder="Tu nombre" />
+            </label>
+            <label>Correo
+              <input type="email" name="email" required placeholder="tunombre@email.com" />
+            </label>
+            <label>Mensaje
+              <textarea name="mensaje" rows="5" required placeholder="Contame qué diseño buscás..."></textarea>
+            </label>
+            <button class="btn primary" type="submit">Enviar mensaje</button>
+          </form>
+          <div class="contact-actions">
+            <a class="btn outline" id="whatsappBtn" href="#" target="_blank" rel="noopener">WhatsApp</a>
+            <a class="btn outline" href="https://instagram.com/" target="_blank" rel="noopener">Instagram</a>
+            <p class="muted small">Tip: cambiá el número de WhatsApp e Instagram en <code>app.js</code>.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="brand small">
+        <img src="assets/logo.png" alt="Logo Piwi Pi" class="logo small"/>
+        <span>Piwi Pi &mdash; vectores</span>
+      </div>
+      <span class="muted small">© <span id="year"></span> Piwi Pi. Todos los derechos reservados.</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
