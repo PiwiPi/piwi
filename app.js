@@ -1,0 +1,194 @@
+/* Configuración básica */
+const WHATSAPP_NUMBER = '5491112345678'; // <-- Reemplazá con tu número en formato internacional, sin + ni 0
+const INSTAGRAM_URL = 'https://instagram.com/'; // <-- Tu perfil
+const EMAIL_DESTINO = 'ventas@tu-dominio.com'; // <-- Correo para mailto del formulario
+const MONEDA = '$'; // puedes cambiar a 'USD ', 'ARS $', etc.
+
+/* Productos del catálogo (ejemplo) */
+const PRODUCTS = [
+  { id: 'p1', name: 'Pack Virolas Rock #1', price: 4500, img: 'assets/prod_1.svg' },
+  { id: 'p2', name: 'Pack Virolas Series #2', price: 4500, img: 'assets/prod_2.svg' },
+  { id: 'p3', name: 'Stencil Retrato Sencillo', price: 6000, img: 'assets/prod_3.svg' },
+  { id: 'p4', name: 'Stencil Mascota', price: 6000, img: 'assets/prod_4.svg' },
+  { id: 'p5', name: 'Pack Iconos Láser', price: 3500, img: 'assets/prod_5.svg' },
+  { id: 'p6', name: 'Texturas B/N Alto Contraste', price: 3000, img: 'assets/prod_6.svg' },
+  { id: 'p7', name: 'Pack Virolas Rock #3', price: 4500, img: 'assets/prod_7.svg' },
+  { id: 'p8', name: 'Plantillas Fotograbado', price: 5200, img: 'assets/prod_8.svg' },
+];
+
+/* Utilidades */
+const fmt = n => MONEDA + new Intl.NumberFormat('es-AR').format(n);
+
+/* Estado del carrito (localStorage) */
+const CART_KEY = 'piwipi_cart_v1';
+let cart = JSON.parse(localStorage.getItem(CART_KEY) || '[]');
+
+function saveCart(){
+  localStorage.setItem(CART_KEY, JSON.stringify(cart));
+  renderCart();
+  updateCartCount();
+}
+
+function addToCart(productId){
+  const item = cart.find(i => i.id === productId);
+  if(item){ item.qty += 1; } else { cart.push({ id: productId, qty: 1 }); }
+  saveCart();
+}
+
+function removeFromCart(productId){
+  cart = cart.filter(i => i.id !== productId);
+  saveCart();
+}
+
+function changeQty(productId, delta){
+  const item = cart.find(i => i.id === productId);
+  if(!item) return;
+  item.qty += delta;
+  if(item.qty <= 0) removeFromCart(productId);
+  else saveCart();
+}
+
+function cartTotal(){
+  return cart.reduce((sum, i) => {
+    const p = PRODUCTS.find(p => p.id === i.id);
+    return sum + (p ? p.price * i.qty : 0);
+  }, 0);
+}
+
+function updateCartCount(){
+  const count = cart.reduce((n, i) => n + i.qty, 0);
+  document.getElementById('cartCount').textContent = count;
+}
+
+/* Render catálogo */
+function renderProducts(){
+  const grid = document.getElementById('productGrid');
+  grid.innerHTML = PRODUCTS.map(p => `
+    <article class="card">
+      <img src="${p.img}" alt="${p.name}">
+      <div class="pad">
+        <h4>${p.name}</h4>
+        <div class="row">
+          <span class="price">${fmt(p.price)}</span>
+          <button class="btn outline" data-add="${p.id}">Agregar</button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+
+  grid.querySelectorAll('[data-add]').forEach(btn => {
+    btn.addEventListener('click', () => addToCart(btn.dataset.add));
+  });
+}
+
+/* Render carrito */
+function renderCart(){
+  const list = document.getElementById('cartList');
+  const empty = document.getElementById('cartEmpty');
+  const summary = document.getElementById('cartSummary');
+
+  if(cart.length === 0){
+    list.innerHTML = '';
+    empty.style.display = 'block';
+    summary.style.display = 'none';
+    return;
+  }
+  empty.style.display = 'none';
+  summary.style.display = 'flex';
+
+  list.innerHTML = cart.map(i => {
+    const p = PRODUCTS.find(p => p.id === i.id);
+    if(!p) return '';
+    const line = p.price * i.qty;
+    return `
+      <div class="cart-item">
+        <img src="${p.img}" alt="${p.name}">
+        <div>
+          <div><strong>${p.name}</strong></div>
+          <div class="muted small">${fmt(p.price)} x ${i.qty} = <strong>${fmt(line)}</strong></div>
+        </div>
+        <div>
+          <button class="btn outline" data-qty='{"id":"${i.id}","d":-1}'>-</button>
+          <button class="btn outline" data-qty='{"id":"${i.id}","d":1}'>+</button>
+          <button class="btn" style="margin-left:6px" data-remove="${i.id}">Quitar</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('cartTotal').textContent = fmt(cartTotal());
+
+  list.querySelectorAll('[data-remove]').forEach(btn => {
+    btn.addEventListener('click', () => removeFromCart(btn.dataset.remove));
+  });
+  list.querySelectorAll('[data-qty]').forEach(btn => {
+    const data = JSON.parse(btn.dataset.qty);
+    btn.addEventListener('click', () => changeQty(data.id, data.d));
+  });
+}
+
+/* Checkout por WhatsApp */
+function checkout(){
+  if(cart.length === 0) return alert('Tu carrito está vacío.');
+  const lines = cart.map(i => {
+    const p = PRODUCTS.find(p => p.id === i.id);
+    return `• ${p.name} x ${i.qty} = ${fmt(p.price * i.qty)}`;
+  });
+  const total = fmt(cartTotal());
+  const message = `Hola! Quiero finalizar mi compra en *Piwi Pi*:%0A%0A${lines.join('%0A')}%0A%0ATotal: *${total}*%0A%0AMi nombre: %0AMi email o WhatsApp para recibir los archivos:`;
+  const url = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}&text=${message}`;
+  window.open(url, '_blank');
+}
+
+/* Contacto: abre mailto */
+function setupContactForm(){
+  const form = document.getElementById('contactForm');
+  form.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const data = new FormData(form);
+    const subject = encodeURIComponent('Consulta desde Piwi Pi');
+    const body = encodeURIComponent(
+      `Nombre: ${data.get('nombre')}
+Email: ${data.get('email')}
+Mensaje:
+${data.get('mensaje')}`
+    );
+    window.location.href = `mailto:${EMAIL_DESTINO}?subject=${subject}&body=${body}`;
+  });
+}
+
+/* WhatsApp & Instagram botones */
+function setupQuickLinks(){
+  const wa = document.getElementById('whatsappBtn');
+  wa.href = `https://api.whatsapp.com/send?phone=${WHATSAPP_NUMBER}`;
+  const ig = document.querySelector('a[href^="https://instagram.com/"]');
+  ig.href = INSTAGRAM_URL;
+}
+
+/* Menú responsive */
+function setupNav(){
+  const toggle = document.getElementById('navToggle');
+  const menu = document.getElementById('navMenu');
+  toggle.addEventListener('click', () => menu.classList.toggle('open'));
+}
+
+/* Limpieza de carrito */
+function setupCartActions(){
+  document.getElementById('clearCartBtn').addEventListener('click', () => {
+    if(confirm('¿Vaciar carrito?')){
+      cart = [];
+      saveCart();
+    }
+  });
+  document.getElementById('checkoutBtn').addEventListener('click', checkout);
+}
+
+/* Init */
+document.getElementById('year').textContent = new Date().getFullYear();
+renderProducts();
+renderCart();
+updateCartCount();
+setupContactForm();
+setupQuickLinks();
+setupNav();
+setupCartActions();
