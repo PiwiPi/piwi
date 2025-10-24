@@ -5,19 +5,47 @@ const FACEBOOK_URL = 'https://www.facebook.com/profile.php?id=61580834246359'; /
 const MONEDA = '$'; // puedes cambiar a 'USD ', 'ARS $', etc.
 
 /* Productos del catálogo (ejemplo) */
-const PRODUCTS = [
-  { id: 'p1', name: 'Pack Virolas de Rock #1', price: 4500, img: 'assets/prod_1.svg' },
-  { id: 'p2', name: 'Pack Virolas de Series #2', price: 4500, img: 'assets/prod_2.svg' },
-  { id: 'p3', name: 'Stencil Retrato Sencillo', price: 6000, img: 'assets/prod_3.svg' },
-  { id: 'p4', name: 'Stencil Mascota', price: 6000, img: 'assets/prod_4.svg' },
-  { id: 'p5', name: 'Pack Iconos Láser', price: 3500, img: 'assets/prod_5.svg' },
-  { id: 'p6', name: 'Texturas B/N Alto Contraste', price: 3000, img: 'assets/prod_6.svg' },
-  { id: 'p7', name: 'Pack Virolas Rock #3', price: 4500, img: 'assets/prod_7.svg' },
-  { id: 'p8', name: 'Plantillas Fotograbado', price: 5200, img: 'assets/prod_8.svg' },
-];
+let PRODUCTS = [];
+ // === Auto-catálogo (Opción A) ===
+const DEFAULT_PRICE   = 4500;                 // precio por defecto para todos
+const PRODUCT_FOLDER  = 'assets/productos';   // carpeta donde subís tus diseños
+const PRODUCT_PREFIX  = 'diseno_';            // prefijo de nombre (diseno_001.png, etc.)
+const MAX_ITEMS       = 200;                  // hasta cuántos archivos intentar
+const EXTENSIONS      = ['png','jpg','jpeg','svg','webp']; // extensiones válidas
+
 
 /* Utilidades */
-const fmt = n => MONEDA + new Intl.NumberFormat('es-AR').format(n);
+const fmt = n => MONEDA + new Intl.NumberFormat('es-AR').format(n
+                                                                // ¿Existe un archivo en la web?
+async function fileExists(url){
+  try {
+    const res = await fetch(url, { method: 'HEAD', cache: 'no-store' });
+    return res.ok;
+  } catch { return false; }
+}
+
+// Descubre diseno_001, diseno_002, ... en /assets/productos
+async function discoverProducts(){
+  const out = [];
+  for (let i = 1; i <= MAX_ITEMS; i++) {
+    const idx = String(i).padStart(3,'0'); // 001, 002...
+    let foundUrl = null;
+    for (const ext of EXTENSIONS) {
+      const url = `${PRODUCT_FOLDER}/${PRODUCT_PREFIX}${idx}.${ext}`;
+      if (await fileExists(url)) { foundUrl = url; break; }
+    }
+    if (foundUrl){
+      out.push({
+        id: `auto${i}`,
+        name: `Diseño ${i}`,
+        price: DEFAULT_PRICE,
+        img: foundUrl
+      });
+    }
+  }
+  return out;
+}
+
 
 /* Estado del carrito (localStorage) */
 const CART_KEY = 'piwipi_cart_v1';
@@ -184,11 +212,18 @@ function setupCartActions(){
 }
 
 /* Init */
-document.getElementById('year').textContent = new Date().getFullYear();
-renderProducts();
-renderCart();
-updateCartCount();
-setupContactForm();
-setupQuickLinks();
-setupNav();
-setupCartActions();
+(async function init(){
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // 1) Cargar productos automáticamente desde /assets/productos
+  PRODUCTS = await discoverProducts();
+
+  // 2) Inicializar la interfaz
+  renderProducts();
+  renderCart();
+  updateCartCount();
+  setupContactForm();
+  setupQuickLinks();
+  setupNav();
+  setupCartActions();
+})();
